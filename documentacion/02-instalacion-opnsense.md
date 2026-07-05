@@ -76,21 +76,109 @@ La instalación será documentada paso por paso a medida que se configure la má
 
 ## Evidencias
 
-Las capturas serán almacenadas en:
+A continuación se muestran las evidencias recopiladas durante la creación e instalación de la máquina virtual OPNsense.
 
-```text
-imagenes/opnsense/
-```
+### Configuración de la red VMnet2
 
-Ejemplos:
+VMnet2 fue configurada como una red Host-only para funcionar como la red LAN interna del laboratorio. El servicio DHCP de VMware fue deshabilitado porque OPNsense administrará la asignación de direcciones IP.
 
-```text
-imagenes/opnsense/01-creacion-maquina.png
-imagenes/opnsense/02-adaptadores-red.png
-imagenes/opnsense/03-instalacion.png
-imagenes/opnsense/04-configuracion-lan.png
-imagenes/opnsense/05-panel-web.png
-```
+![Configuración de VMnet2](../imagenes/01-configuracion-vmnet2.png)
+
+### Compatibilidad de hardware
+
+Se utilizó la compatibilidad de hardware de VMware Workstation 17.5 o posterior.
+
+![Compatibilidad de hardware](../imagenes/02-compatibilidad-hardware-opnsense.png)
+
+### Selección de la imagen ISO
+
+Se seleccionó la imagen DVD ISO de OPNsense para iniciar la instalación.
+
+![Selección de la ISO de OPNsense](../imagenes/03-seleccion-iso-opnsense.png)
+
+### Configuración del procesador
+
+La máquina virtual fue configurada con un procesador virtual y dos núcleos.
+
+![Configuración del procesador](../imagenes/04-configuracion-procesador-opnsense.png)
+
+### Configuración del adaptador WAN
+
+El primer adaptador utilizado para la conexión WAN fue configurado en modo NAT.
+
+![Adaptador WAN en modo NAT](../imagenes/05-adaptador-wan-nat.png)
+
+### Adaptadores de red
+
+Se agregaron dos adaptadores de red a la máquina virtual.
+
+![Adaptadores de OPNsense](../imagenes/06-adaptadores-opnsense.png)
+
+### Configuración final de los adaptadores
+
+El adaptador LAN fue conectado a VMnet2 y el adaptador WAN fue conectado a la red NAT de VMware.
+
+![Adaptadores configurados](../imagenes/07-adaptadores-configurados-opnsense.png)
+
+### Arranque en modo Live
+
+OPNsense inició desde la imagen ISO y detectó las interfaces LAN y WAN.
+
+![Arranque Live de OPNsense](../imagenes/08-arranque-live-opnsense.png)
+
+### Selección del teclado
+
+Durante la instalación se mantuvo el mapa de teclado predeterminado.
+
+![Selección del teclado](../imagenes/09-seleccion-teclado-opnsense.png)
+
+### Instalación mediante ZFS
+
+Se seleccionó ZFS como sistema de archivos para la instalación.
+
+![Instalación ZFS](../imagenes/10-instalacion-zfs-opnsense.png)
+
+### Tipo de disco
+
+Se seleccionó la configuración correspondiente a un solo disco virtual.
+
+![Tipo de disco](../imagenes/11-tipo-de-disco-opnsense.png)
+
+### Selección del disco virtual
+
+El instalador detectó el disco virtual `da0`, creado exclusivamente para OPNsense.
+
+![Selección del disco](../imagenes/12-seleccion-disco-opnsense.png)
+
+### Progreso de la instalación
+
+El instalador clonó el sistema y preparó el disco virtual de destino.
+
+![Progreso de la instalación](../imagenes/13-progreso-instalacion-opnsense.png)
+
+### Configuración de la contraseña
+
+Al finalizar la instalación se configuró una contraseña para la cuenta `root`. La contraseña no fue almacenada en este repositorio.
+
+![Configuración de la contraseña root](../imagenes/14-cambio-password-opnsense.png)
+
+### Reinicio del sistema
+
+Después de completar la instalación se seleccionó la opción para reiniciar OPNsense.
+
+![Reinicio de OPNsense](../imagenes/15-reinicio-opnsense.png)
+
+### Desconexión de la imagen ISO
+
+Se desconectó la unidad CD/DVD y se deshabilitó la opción `Connect at power on` para evitar que la máquina iniciara nuevamente desde el instalador.
+
+![Desconexión de la imagen ISO](../imagenes/16-desconectar-iso-opnsense.png)
+
+### Primer inicio desde el disco
+
+OPNsense inició correctamente desde el disco virtual y mostró las interfaces LAN y WAN en la consola.
+
+![Consola de OPNsense instalada](../imagenes/17-consola-opnsense-instalada.png)
 
 ## Verificaciones
 
