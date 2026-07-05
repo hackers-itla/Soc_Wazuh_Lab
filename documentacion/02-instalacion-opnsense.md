@@ -256,7 +256,7 @@ OPNsense inició correctamente desde el disco virtual y mostró las interfaces L
 
 ### 17. Acceso a detección de intrusiones
 
-![Acceso a detección de intrusiones](../imágenes/34-opnsense-acceder-deteccion-intrusiones.png)
+![Acceso a detección de intrusiones](../imagenes/34-opnsense-acceder-deteccion-intrusiones.png)
 
 ## Verificaciones
 
