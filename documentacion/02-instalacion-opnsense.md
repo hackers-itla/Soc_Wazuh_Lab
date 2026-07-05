@@ -318,6 +318,12 @@ La actualización se completó correctamente. En el panel de control se confirm�
 
 ```text
 OPNsense 26.1.11_6
+```
+
+También se verificó que la puerta de enlace WAN continuara activa y que los servicios principales estuvieran funcionando correctamente.
+
+![Panel de OPNsense actualizado](../imagenes/43-panel-opnsense-actualizado.png)
+OPNsense 26.1.11_6
 
 ## Verificaciones
 
