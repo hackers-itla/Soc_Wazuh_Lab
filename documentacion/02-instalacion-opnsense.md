@@ -1,4 +1,4 @@
-# Instalación y configuración de OPNsense
+# Instalación de OPNsense
 
 ## Estado
 
@@ -27,7 +27,7 @@ Posteriormente se instalará Suricata para proporcionar funciones de IDS/IPS.
 | Sistema | OPNsense |
 | Procesadores | 2 |
 | Memoria RAM | 4 GB |
-| Disco | 20 GB |
+| Disco | 30 GB |
 | Adaptador 1 | NAT o Bridge — WAN |
 | Adaptador 2 | Red interna — LAN |
 
@@ -60,7 +60,7 @@ Configurado en una red interna exclusiva para las máquinas virtuales del labora
 Nombre de la red interna:
 
 ```text
-SOC-LAN
+VMnet2
 ```
 
 ## Instalación
