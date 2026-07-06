@@ -44,7 +44,7 @@ Posteriormente se instalará Suricata para proporcionar funciones de IDS/IPS.
 2. Se seleccionó la imagen ISO de OPNsense.
 3. Se asignaron 2 procesadores.
 4. Se asignaron 4 GB de memoria RAM.
-5. Se creó un disco virtual de 20 GB.
+5. Se creó un disco virtual de 30 GB.
 6. Se agregaron dos adaptadores de red.
 
 ## Configuración de los adaptadores
