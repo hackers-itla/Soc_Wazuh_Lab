@@ -115,6 +115,7 @@ El primer adaptador se configuró como LAN en VMnet2 y el segundo como WAN en mo
 Una vez OPNsense inició y detectó las interfaces LAN y WAN nos logueamos.
 
 Usuario: root
+
 Contraseña: opnsense
 
 ![Arranque Live de OPNsense](../imagenes/08-arranque-live-opnsense.png)
