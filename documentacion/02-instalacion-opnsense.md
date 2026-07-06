@@ -219,7 +219,7 @@ OPNsense inició correctamente desde el disco virtual y mostró las interfaces L
 ![Configuración de la máscara LAN](../imagenes/22-opnsense-configurar-mascara-lan.png)
 
 
-### Configuración de IPv6
+### Configuración de IPv6 (no configuramos nada)
 
 ![Configuración IPv6 de la LAN](../imagenes/23-opnsense-configurar-ipv6-lan.png)
 
@@ -232,18 +232,6 @@ OPNsense inició correctamente desde el disco virtual y mostró las interfaces L
 
 
 ### Configuración del rango DHCP
-
-![Configuración del rango DHCP](../imagenes/25-opnsense-configurar-rango-dhcp.png)
-
-
-## Acceso a la interfaz web
-
-### Configuración de HTTPS y certificado
-
-![Configuración HTTPS de OPNsense](../imagenes/26-opnsense-configurar-https-certificado.png)
-
-
-### Configuración LAN completada
 
 ![Configuración LAN completada](../imagenes/27-opnsense-configuracion-lan-completada.png)
 
