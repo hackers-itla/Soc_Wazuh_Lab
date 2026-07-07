@@ -1,345 +1,206 @@
-# Configuración de Suricata como IPS en OPNsense
+---
 
-## Estado
+## 21. Preparación del archivo de documentación
 
-> Completado
+Se abrió el archivo `04-configuracion-suricata.md`, ubicado dentro de la carpeta `documentacion` del repositorio.
 
-## Objetivo
+Este archivo se utiliza para registrar el proceso completo de configuración de Suricata como IPS en OPNsense.
 
-Configurar Suricata en OPNsense para inspeccionar el tráfico de la red LAN y funcionar como un sistema de prevención de intrusiones, o IPS.
+![Archivo de configuración de Suricata en GitHub](../imagenes/91-archivo-configuracion-suricata-en-github.png)
 
-Durante este proceso se realizaron las siguientes tareas:
+Posteriormente, se abrió el editor de GitHub para agregar las evidencias, explicaciones y configuraciones realizadas durante el laboratorio.
 
-- Activación de Suricata.
-- Cambio del modo IDS al modo IPS.
-- Selección de la interfaz LAN.
-- Descarga de reglas de seguridad de `abuse.ch`.
-- Creación de una política de bloqueo.
-- Creación de una regla personalizada.
-- Prueba del bloqueo desde Kali Linux.
-- Verificación de las alertas generadas.
-- Desactivación de la regla de prueba.
+![Edición de la documentación de Suricata](../imagenes/92-edicion-documentacion-configuracion-suricata.png)
 
 ---
 
-## 1. Configuración inicial de Suricata
+## 22. Revisión de categorías ET Open
 
-Se accedió a la configuración de Suricata mediante la siguiente ruta:
+Además de las listas de indicadores proporcionadas por `abuse.ch`, se revisaron las categorías disponibles de ET Open.
+
+ET Open contiene firmas para detectar diferentes tipos de actividad maliciosa, como:
+
+- Comunicación con botnets.
+- Intentos de explotación.
+- Malware.
+- Phishing.
+- Escaneos de red.
+- Ataques contra servicios web.
+- Ejecución de shellcode.
+- Actividad relacionada con servidores de comando y control.
+
+Las categorías fueron seleccionadas de forma controlada para evitar habilitar reglas innecesarias y reducir la posibilidad de falsos positivos.
+
+### Primera parte del listado
+
+En la primera parte se revisaron categorías relacionadas con botnets, respuestas de ataques, eventos recientes y tráfico DNS sospechoso.
+
+![Primera parte del listado de categorías ET Open](../imagenes/93-listado-categorias-et-open-parte-1.png)
+
+Entre las categorías seleccionadas se encuentran:
 
 ```text
-Services → Intrusion Detection → Administration → Settings
+ET open/botcc.portgrouped
+ET open/emerging-attack_response
+ET open/emerging-current_events
+ET open/emerging-dns
 ```
 
-Inicialmente, Suricata se encontraba desactivado, configurado en modo `PCAP live mode (IDS)` y asociado a la interfaz WAN.
-
-El modo IDS permite detectar y registrar actividad sospechosa, pero no bloquea el tráfico.
-
-![Configuración inicial de Suricata en modo IDS](../imagenes/71-configuracion-inicial-suricata-ids-wan.png)
+Se utilizó `botcc.portgrouped` en lugar de habilitar simultáneamente `botcc`, con el objetivo de evitar reglas duplicadas relacionadas con comunicaciones de botnets.
 
 ---
 
-## 2. Configuración de Suricata en modo IPS
+## 23. Categorías de explotación y malware
 
-Se activó Suricata y se modificaron los siguientes parámetros:
+En la segunda parte del listado se revisaron categorías relacionadas con explotación de vulnerabilidades, malware y actividad sospechosa en diferentes protocolos.
 
-| Parámetro | Configuración |
-|---|---|
-| Enabled | Activado |
-| Capture mode | Netmap (IPS) |
-| Interface | LAN |
-| Promiscuous mode | Desactivado |
-| Pattern matcher | Default |
+![Segunda parte del listado de categorías ET Open](../imagenes/94-listado-categorias-et-open-parte-2.png)
 
-El modo `Netmap (IPS)` permite que Suricata inspeccione el tráfico y descarte los paquetes que coincidan con reglas configuradas con la acción `Drop`.
-
-Se seleccionó la interfaz LAN porque por ella circula el tráfico generado por las máquinas internas del laboratorio.
-
-![Suricata configurado en modo Netmap IPS sobre la interfaz LAN](../imagenes/72-configuracion-suricata-netmap-ips-lan.png)
-
----
-
-## 3. Verificación inicial de conectividad desde Kali Linux
-
-Antes de aplicar las reglas de bloqueo, se verificó la conectividad de Kali Linux.
-
-Se realizaron pruebas hacia:
-
-- La puerta de enlace OPNsense: `192.168.126.254`.
-- La dirección pública `1.1.1.1`.
-- El dominio `google.com`.
-
-También se utilizó el comando `ip a` para comprobar la dirección IP asignada a Kali Linux.
-
-```bash
-ping -c 4 192.168.126.254
-ping -c 4 1.1.1.1
-ping -c 4 google.com
-ip a
-```
-
-La máquina Kali Linux tenía asignada la dirección IP:
+Entre las categorías seleccionadas se encuentran:
 
 ```text
-192.168.126.188
+ET open/emerging-exploit
+ET open/emerging-malware
 ```
 
-Las pruebas fueron exitosas y no se presentó pérdida de paquetes.
+La categoría `emerging-exploit` permite detectar intentos de explotación contra sistemas y servicios vulnerables.
 
-![Verificación de conectividad de Kali antes de activar el bloqueo](../imagenes/73-verificacion-conectividad-kali-antes-del-ips.png)
-
----
-
-## 4. Revisión de los conjuntos de reglas disponibles
-
-Se accedió a la pestaña **Download** para revisar los conjuntos de reglas disponibles para Suricata.
-
-Inicialmente, las fuentes de reglas aparecían con el estado `not installed`, lo que indicaba que todavía no habían sido descargadas.
-
-![Conjuntos de reglas de Suricata sin instalar](../imagenes/74-rulesets-suricata-no-instalados.png)
+La categoría `emerging-malware` contiene firmas relacionadas con comunicaciones, descargas y comportamientos asociados con diferentes familias de malware.
 
 ---
 
-## 5. Selección de los conjuntos de reglas de abuse.ch
+## 24. Categorías de phishing, escaneo y shellcode
 
-Se seleccionaron los siguientes conjuntos de reglas proporcionados por `abuse.ch`:
+En la tercera parte del listado se revisaron las categorías relacionadas con phishing, reconocimiento de red, escaneos y ejecución de código malicioso.
 
-- Feodo Tracker.
-- SSL Fingerprint Blacklist.
-- SSL IP Blacklist.
-- ThreatFox.
-- URLhaus.
+![Tercera parte del listado de categorías ET Open](../imagenes/95-listado-categorias-et-open-parte-3.png)
 
-Estas fuentes contienen indicadores de compromiso relacionados con:
+Entre las categorías seleccionadas se encuentran:
 
-- Servidores de comando y control.
-- Direcciones IP maliciosas.
-- Certificados SSL sospechosos.
-- Distribución de malware.
-- Direcciones URL maliciosas.
+```text
+ET open/emerging-phishing
+ET open/emerging-scan
+ET open/emerging-shellcode
+```
 
-![Selección de los conjuntos de reglas de abuse.ch](../imagenes/75-seleccion-rulesets-abuse-ch.png)
+Estas categorías permiten detectar:
+
+- Enlaces y comunicaciones relacionadas con phishing.
+- Escaneos de puertos y reconocimiento de red.
+- Intentos de ejecución o transferencia de shellcode.
+- Actividad previa a posibles intentos de explotación.
 
 ---
 
-## 6. Descarga y activación de las reglas
+## 25. Categorías de ataques web
 
-Después de seleccionar las fuentes, se presionó el botón:
+En la última parte del listado se revisaron las reglas relacionadas con clientes web, servidores web y aplicaciones web específicas.
+
+![Cuarta parte del listado de categorías ET Open](../imagenes/96-listado-categorias-et-open-parte-4.png)
+
+Entre las categorías seleccionadas se encuentran:
+
+```text
+ET open/emerging-web_client
+ET open/emerging-web_server
+ET open/emerging-web_specific_apps
+```
+
+Estas reglas permiten detectar actividad como:
+
+- Intentos de explotación contra servidores web.
+- Solicitudes HTTP sospechosas.
+- Ataques contra aplicaciones web.
+- Inyección de comandos.
+- Intentos de explotación contra navegadores y clientes web.
+- Patrones relacionados con SQL Injection y otras vulnerabilidades.
+
+---
+
+## 26. Instalación y habilitación de las categorías ET Open
+
+Después de seleccionar las categorías necesarias, se utilizó la opción para habilitar los conjuntos de reglas seleccionados.
+
+Posteriormente, se presionó el botón:
 
 ```text
 Download & Update Rules
 ```
 
-Una vez finalizada la descarga, los conjuntos de reglas mostraron una fecha de actualización y una marca de verificación en la columna **Enabled**.
+La columna **Last updated** mostró la fecha y hora de actualización, mientras que la columna **Enabled** mostró una marca de verificación para los conjuntos habilitados.
 
-Esto confirmó que las reglas fueron instaladas y habilitadas correctamente.
+![Categorías ET Open instaladas y habilitadas](../imagenes/97-categorias-et-open-instaladas-y-habilitadas.png)
 
-![Reglas de abuse.ch descargadas y habilitadas](../imagenes/76-rulesets-abuse-ch-descargados-y-habilitados.png)
-
----
-
-## 7. Aplicación de la configuración del IPS
-
-Se regresó a la pestaña **Settings** y se presionó el botón **Apply** para aplicar los cambios realizados.
-
-En este punto, Suricata quedó habilitado en modo IPS sobre la interfaz LAN.
-
-![Aplicación de la configuración de Suricata IPS](../imagenes/77-aplicar-configuracion-suricata-ips.png)
-
----
-
-## 8. Acceso a las políticas de Suricata
-
-Se accedió a la sección de políticas mediante la siguiente ruta:
+Las principales categorías instaladas fueron:
 
 ```text
-Services → Intrusion Detection → Policy
+ET open/botcc.portgrouped
+ET open/emerging-attack_response
+ET open/emerging-current_events
+ET open/emerging-dns
+ET open/emerging-exploit
+ET open/emerging-malware
+ET open/emerging-phishing
+ET open/emerging-scan
+ET open/emerging-shellcode
+ET open/emerging-web_client
+ET open/emerging-web_server
+ET open/emerging-web_specific_apps
 ```
 
-Inicialmente no existían políticas configuradas.
+No se habilitaron inicialmente todas las categorías disponibles, ya que algunas pueden generar una gran cantidad de eventos, falsos positivos o un consumo innecesario de recursos.
 
-Las políticas permiten modificar de forma masiva el comportamiento de las reglas, por ejemplo, cambiar reglas cuya acción es `Alert` para que utilicen la acción `Drop`.
-
-![Sección de políticas de Suricata sin configurar](../imagenes/78-politicas-suricata-sin-configurar.png)
-
----
-
-## 9. Creación de una nueva política
-
-Se presionó el botón con el símbolo `+` para crear una nueva política de Suricata.
-
-La política fue habilitada y se le asignó prioridad `1`.
-
-![Creación de una nueva política de Suricata](../imagenes/79-crear-politica-suricata.png)
-
----
-
-## 10. Selección de los conjuntos de reglas para la política
-
-Dentro de la nueva política se seleccionaron los conjuntos de reglas descargados desde `abuse.ch`.
-
-De esta manera, la política solamente afectaría las reglas pertenecientes a estas fuentes.
-
-![Selección de los conjuntos de reglas para la política](../imagenes/80-seleccionar-rulesets-para-politica.png)
-
----
-
-## 11. Conversión de alertas en bloqueos
-
-La política fue configurada con los siguientes parámetros:
-
-| Parámetro | Valor |
-|---|---|
-| Enabled | Activado |
-| Priority | 1 |
-| Rulesets | Reglas de abuse.ch |
-| Action | Alert |
-| New action | Drop |
-| Description | Bloquear indicadores maliciosos de abuse.ch |
-
-Esta política cambia las reglas cuya acción original es `Alert` para que utilicen la acción `Drop`.
-
-De esta forma, Suricata no solamente detecta el tráfico malicioso, sino que también lo bloquea.
-
-![Política para convertir reglas Alert en Drop](../imagenes/81-politica-abuse-ch-alert-a-drop.png)
-
----
-
-## 12. Verificación de las reglas configuradas como Drop
-
-Se accedió a la pestaña **Rules** para comprobar que las reglas de `abuse.ch` estuvieran habilitadas y configuradas con la acción `Drop`.
-
-La presencia de la acción `Drop` confirmó que la política había sido aplicada correctamente.
-
-![Reglas de abuse.ch configuradas con la acción Drop](../imagenes/82-reglas-abuse-ch-configuradas-como-drop.png)
-
----
-
-## 13. Acceso a las reglas personalizadas
-
-Se accedió a la pestaña **User defined** para crear una regla personalizada.
-
-Inicialmente no existían reglas definidas por el usuario.
-
-![Sección de reglas personalizadas sin reglas configuradas](../imagenes/83-reglas-personalizadas-sin-configurar.png)
-
----
-
-## 14. Creación de una regla personalizada de prueba
-
-Se creó una regla personalizada para bloquear el tráfico desde Kali Linux hacia la dirección IP pública `1.1.1.1`.
-
-La regla fue configurada de la siguiente manera:
-
-| Parámetro | Valor |
-|---|---|
-| Enabled | Activado |
-| Source IP | 192.168.126.188 |
-| Destination IP | 1.1.1.1 |
-| Action | Drop |
-| Bypass | Desactivado |
-| Description | Prueba IPS - bloquear Kali hacia 1.1.1.1 |
-
-La dirección IP `192.168.126.188` corresponde a la máquina Kali Linux utilizada para realizar la prueba.
-
-![Creación de la regla para bloquear Kali hacia 1.1.1.1](../imagenes/84-crear-regla-bloqueo-kali-hacia-1-1-1-1.png)
-
----
-
-## 15. Regla personalizada guardada y habilitada
-
-Después de guardar la configuración, la regla apareció en la lista de reglas personalizadas.
-
-Se verificó que:
-
-- La regla estuviera habilitada.
-- La acción configurada fuera `Drop`.
-- La descripción identificara correctamente la prueba.
-
-Luego se presionó el botón **Apply** para aplicar la regla.
-
-![Regla personalizada guardada y habilitada](../imagenes/85-regla-personalizada-guardada-y-habilitada.png)
-
----
-
-## 16. Verificación de los parámetros de la regla
-
-Se abrió nuevamente la regla personalizada para comprobar que todos los parámetros estuvieran guardados correctamente.
-
-Se confirmó lo siguiente:
-
-- Dirección IP de origen: `192.168.126.188`.
-- Dirección IP de destino: `1.1.1.1`.
-- Acción: `Drop`.
-- Regla habilitada.
-- Opción `Bypass` desactivada.
-
-![Verificación de la regla de bloqueo de Kali](../imagenes/86-verificacion-regla-bloqueo-kali.png)
-
----
-
-## 17. Prueba de bloqueo desde Kali Linux
-
-Desde Kali Linux se ejecutó nuevamente el siguiente comando:
-
-```bash
-ping -c 4 1.1.1.1
-```
-
-El resultado obtenido fue:
+Entre las categorías que se dejaron deshabilitadas se encuentran:
 
 ```text
-4 packets transmitted, 0 received, 100% packet loss
+ET open/emerging-games
+ET open/emerging-chat
+ET open/emerging-p2p
+ET open/emerging-inappropriate
+ET open/emerging-info
+ET open/emerging-hunting
+ET open/emerging-policy
 ```
-
-La pérdida total de paquetes confirmó que Suricata estaba bloqueando correctamente el tráfico dirigido desde Kali Linux hacia `1.1.1.1`.
-
-![Prueba de ping bloqueada por Suricata IPS](../imagenes/87-prueba-ping-bloqueado-por-ips.png)
 
 ---
 
-## 18. Verificación de las alertas generadas
+## 27. Verificación de las reglas ET Open
 
-Se accedió a la pestaña **Alerts** para revisar los eventos generados por la regla personalizada.
+Se accedió a la pestaña **Rules** para confirmar que las reglas pertenecientes a las categorías ET Open fueran importadas correctamente.
 
-Los registros mostraron la siguiente información:
+En la columna **Source** se observaron reglas procedentes de conjuntos como:
 
-| Campo | Valor |
+```text
+emerging-exploit.rules
+emerging-web_server.rules
+emerging-malware.rules
+```
+
+La columna **Action** mostró el valor:
+
+```text
+alert
+```
+
+![Verificación de reglas ET Open en modo alerta](../imagenes/98-verificacion-reglas-et-open-en-modo-alerta.png)
+
+Las reglas ET Open se mantuvieron inicialmente con la acción `Alert`.
+
+Esto significa que Suricata detectará y registrará el tráfico que coincida con estas firmas, pero no lo bloqueará automáticamente.
+
+La estrategia aplicada quedó de la siguiente manera:
+
+| Fuente de reglas | Acción |
 |---|---|
-| Action | blocked |
-| Interface | LAN |
-| Source | 192.168.126.188 |
-| Destination | 1.1.1.1 |
-| Alert | Prueba IPS - bloquear Kali hacia 1.1.1.1 |
+| Abuse.ch | `Drop` |
+| ET Open | `Alert` |
+| Regla personalizada de prueba | `Drop`, posteriormente deshabilitada |
 
-Esto confirmó que Suricata detectó y bloqueó los paquetes enviados durante la prueba.
+Las reglas de `abuse.ch` bloquean comunicaciones relacionadas con indicadores maliciosos conocidos.
 
-![Alertas de tráfico bloqueado por Suricata](../imagenes/88-alertas-de-trafico-bloqueado-suricata.png)
+Las reglas ET Open permanecen en modo de alerta para permitir su análisis antes de cambiar firmas específicas a la acción `Drop`.
 
----
-
-## 19. Desactivación de la regla de prueba
-
-Después de confirmar el funcionamiento del IPS, se desactivó la regla personalizada para restaurar la conectividad hacia `1.1.1.1`.
-
-Se desmarcó la casilla **Enabled** y se presionó el botón **Apply** y reiniciamos suricata.
-
-![Aplicación de la desactivación de la regla de prueba](../imagenes/89-aplicar-desactivacion-regla-de-prueba.png)
-
----
-
-## 20. Verificación de conectividad después de desactivar la regla
-
-Desde Kali Linux se ejecutó nuevamente el siguiente comando:
-
-```bash
-ping -c 4 1.1.1.1
-```
-
-Durante la aplicación de los cambios se presentó una pérdida parcial de paquetes. Posteriormente, las respuestas comenzaron a recibirse nuevamente.
-
-Esto confirmó que la conectividad hacia `1.1.1.1` fue restaurada después de desactivar la regla personalizada.
-
-![Verificación de conectividad después de desactivar la regla](../imagenes/90-verificacion-conectividad-tras-desactivar-regla.png)
+No todas las firmas individuales aparecen necesariamente habilitadas dentro de la pestaña **Rules**, ya que cada conjunto puede incluir reglas activas y reglas desactivadas por defecto. Sin embargo, los conjuntos seleccionados quedaron instalados y disponibles para Suricata.
 
 ---
 
@@ -352,12 +213,22 @@ El sistema quedó preparado para:
 - Inspeccionar el tráfico de la interfaz LAN.
 - Detectar tráfico relacionado con indicadores de compromiso.
 - Utilizar reglas externas proporcionadas por `abuse.ch`.
-- Convertir alertas en acciones de bloqueo.
+- Bloquear indicadores maliciosos conocidos mediante la acción `Drop`.
+- Utilizar categorías de ET Open para detectar exploits, malware, phishing y escaneos.
+- Mantener las reglas ET Open inicialmente con la acción `Alert`.
+- Convertir selectivamente reglas de alerta en reglas de bloqueo.
 - Crear reglas personalizadas por dirección IP.
 - Bloquear tráfico en tiempo real.
 - Registrar los paquetes bloqueados en la sección de alertas.
 - Restaurar la conectividad al desactivar una regla.
+- Ampliar posteriormente la configuración mediante nuevas políticas de detección y bloqueo.
 
-La prueba realizada desde Kali Linux confirmó que OPNsense y Suricata están funcionando correctamente como sistema de prevención de intrusiones dentro del laboratorio SOC.
+La estrategia final quedó configurada de la siguiente manera:
 
-> **Nota:** La regla utilizada para bloquear el acceso a `1.1.1.1` fue creada únicamente para comprobar el funcionamiento del IPS. Después de finalizar la prueba, la regla fue desactivada para evitar interrupciones en la conectividad.
+```text
+Abuse.ch → Drop
+ET Open → Alert
+Reglas personalizadas → Según la prueba o necesidad
+```
+
+Esta configuración permite que el laboratorio detecte una amplia variedad de actividades sospechosas mientras limita el bloqueo automático a indicadores considerados de alta confianza.
