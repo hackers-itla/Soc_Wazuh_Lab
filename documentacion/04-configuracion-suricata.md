@@ -321,7 +321,7 @@ Esto confirmó que Suricata detectó y bloqueó los paquetes enviados durante la
 
 Después de confirmar el funcionamiento del IPS, se desactivó la regla personalizada para restaurar la conectividad hacia `1.1.1.1`.
 
-Se desmarcó la casilla **Enabled** y se presionó el botón **Apply**.
+Se desmarcó la casilla **Enabled** y se presionó el botón **Apply** y reiniciamos suricata.
 
 ![Aplicación de la desactivación de la regla de prueba](../imagenes/89-aplicar-desactivacion-regla-de-prueba.png)
 
