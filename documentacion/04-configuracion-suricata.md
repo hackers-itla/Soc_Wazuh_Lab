@@ -342,22 +342,209 @@ Esto confirmó que la conectividad hacia `1.1.1.1` fue restaurada después de de
 ![Verificación de conectividad después de desactivar la regla](../imagenes/90-verificacion-conectividad-tras-desactivar-regla.png)
 
 ---
+# Configuración de reglas ET Open
+
+Después de comprobar el funcionamiento de Suricata como IPS mediante una regla personalizada, se continuó la configuración habilitando conjuntos de reglas de **Emerging Threats Open**, identificadas en OPNsense como `ET open`.
+
+Estas reglas amplían la capacidad de detección de Suricata frente a ataques, malware, phishing, escaneos de red, explotación de vulnerabilidades y amenazas dirigidas a aplicaciones web.
+
+---
+
+## 21. Archivo de configuración de Suricata en GitHub
+
+Se verificó la existencia del archivo:
+
+```text
+documentacion/04-configuracion-suricata.md
+```
+
+Este archivo se utiliza para documentar todo el proceso de configuración de Suricata como IDS/IPS dentro del laboratorio SOC.
+
+![Archivo de configuración de Suricata creado en GitHub](../imagenes/91-archivo-configuracion-suricata-creado-github.png)
+
+---
+
+## 22. Edición del archivo de documentación
+
+Se abrió el archivo `04-configuracion-suricata.md` en el editor de GitHub para agregar la documentación correspondiente a la instalación, configuración y pruebas realizadas con Suricata.
+
+![Edición del archivo de configuración de Suricata en GitHub](../imagenes/92-edicion-archivo-configuracion-suricata-github.png)
+
+---
+
+## 23. Revisión inicial de las reglas ET Open
+
+Se accedió a la siguiente ruta:
+
+```text
+Services → Intrusion Detection → Administration → Download
+```
+
+En esta sección se encuentran los diferentes conjuntos de reglas disponibles para Suricata.
+
+Inicialmente, las reglas de `ET open` aparecían con el estado:
+
+```text
+not installed
+```
+
+Esto indicaba que todavía no habían sido descargadas ni activadas en el sistema.
+
+![Listado de reglas ET Open, primera parte](../imagenes/93-listado-reglas-et-open-parte-1-suricata-opnsense.png)
+
+---
+
+## 24. Revisión de categorías de ataques y malware
+
+Se continuó revisando el listado de reglas disponibles.
+
+Entre las categorías mostradas se encontraban reglas relacionadas con:
+
+- Explotación de vulnerabilidades.
+- Kits de explotación.
+- Transferencia de archivos.
+- Protocolos FTP.
+- Actividades de búsqueda de amenazas.
+- Tráfico ICMP.
+- Malware.
+- Aplicaciones y servicios de red.
+
+![Listado de reglas ET Open, segunda parte](../imagenes/94-listado-reglas-et-open-parte-2-suricata-opnsense.png)
+
+---
+
+## 25. Revisión de reglas de phishing, escaneo y acceso remoto
+
+En la siguiente parte del listado se observaron categorías relacionadas con:
+
+- Redes P2P.
+- Phishing.
+- Políticas de seguridad.
+- Acceso remoto.
+- Escaneo de puertos y servicios.
+- Shellcode.
+- SMTP.
+- SNMP.
+- Ataques SQL.
+- Telnet.
+- TFTP.
+
+![Listado de reglas ET Open, tercera parte](../imagenes/95-listado-reglas-et-open-parte-3-suricata-opnsense.png)
+
+---
+
+## 26. Revisión de reglas para aplicaciones web
+
+En la parte final del listado se observaron reglas relacionadas con:
+
+- Agentes de usuario sospechosos.
+- Telefonía VoIP.
+- Ataques contra clientes web.
+- Ataques contra servidores web.
+- Vulnerabilidades específicas de aplicaciones web.
+- Gusanos informáticos.
+- Tráfico de redes Tor.
+- Detección de aplicaciones.
+
+![Listado de reglas ET Open, cuarta parte](../imagenes/96-listado-reglas-et-open-parte-4-suricata-opnsense.png)
+
+---
+
+## 27. Selección y descarga de reglas ET Open
+
+Para ampliar la cobertura de detección de Suricata, se seleccionaron y habilitaron los siguientes conjuntos de reglas:
+
+| Conjunto de reglas | Función principal |
+|---|---|
+| `ET open/botcc.portgrouped` | Detecta comunicaciones relacionadas con botnets y servidores de comando y control |
+| `ET open/emerging-attack_response` | Detecta respuestas asociadas con ataques o sistemas comprometidos |
+| `ET open/emerging-current_events` | Contiene reglas relacionadas con amenazas y campañas recientes |
+| `ET open/emerging-dns` | Detecta actividad DNS sospechosa o maliciosa |
+| `ET open/emerging-exploit` | Detecta intentos de explotación de vulnerabilidades |
+| `ET open/emerging-malware` | Detecta tráfico relacionado con malware |
+| `ET open/emerging-phishing` | Detecta dominios, enlaces y actividad relacionada con phishing |
+| `ET open/emerging-scan` | Detecta escaneos de red, puertos y servicios |
+| `ET open/emerging-shellcode` | Detecta patrones asociados con shellcode |
+| `ET open/emerging-web_client` | Detecta ataques dirigidos a navegadores y clientes web |
+| `ET open/emerging-web_server` | Detecta ataques dirigidos a servidores web |
+| `ET open/emerging-web_specific_apps` | Detecta ataques contra aplicaciones web específicas |
+
+Después de seleccionar estas categorías, se utilizó la opción:
+
+```text
+Download & Update Rules
+```
+
+Una vez finalizada la descarga, las categorías habilitadas mostraron una fecha en la columna **Last updated** y una marca de verificación en la columna **Enabled**.
+
+![Reglas ET Open descargadas y habilitadas](../imagenes/97-reglas-et-open-habilitadas-suricata-opnsense.png)
+
+---
+
+## 28. Verificación de las reglas ET Open instaladas
+
+Se accedió a la pestaña:
+
+```text
+Services → Intrusion Detection → Administration → Rules
+```
+
+En esta sección se comprobó que las firmas pertenecientes a las categorías de `ET open` habían sido cargadas correctamente.
+
+La tabla muestra información como:
+
+| Campo | Descripción |
+|---|---|
+| SID | Identificador único de la regla |
+| Action | Acción original de la regla |
+| Source | Archivo o conjunto de reglas al que pertenece |
+| ClassType | Clasificación de la amenaza |
+| Message | Descripción de la actividad detectada |
+| Enabled | Indica si la firma está activa |
+
+En la captura se observan reglas relacionadas con:
+
+- Desbordamientos de búfer.
+- Ataques contra protocolos SSH y Telnet.
+- Intentos de acceso administrativo.
+- Inyección SQL.
+- Explotación de servidores web.
+- Actividad de malware.
+- Comunicaciones IRC sospechosas.
+
+Las reglas aparecen inicialmente con la acción `alert`. Esta acción permite detectar y registrar el tráfico que coincida con una firma.
+
+Cuando una política cambia la acción de `Alert` a `Drop`, las reglas seleccionadas también pueden bloquear el tráfico en modo IPS.
+
+![Verificación de reglas ET Open con acción Alert](../imagenes/98-verificacion-reglas-et-open-en-alerta-suricata-opnsense.png)
+
+---
 
 ## Resultado final
 
-Suricata quedó configurado correctamente como IPS en OPNsense.
+Suricata quedó configurado correctamente como sistema de prevención de intrusiones, o IPS, dentro de OPNsense.
 
 El sistema quedó preparado para:
 
-- Inspeccionar el tráfico de la interfaz LAN.
+- Inspeccionar el tráfico que atraviesa la interfaz LAN.
 - Detectar tráfico relacionado con indicadores de compromiso.
 - Utilizar reglas externas proporcionadas por `abuse.ch`.
-- Convertir alertas en acciones de bloqueo.
-- Crear reglas personalizadas por dirección IP.
-- Bloquear tráfico en tiempo real.
-- Registrar los paquetes bloqueados en la sección de alertas.
-- Restaurar la conectividad al desactivar una regla.
+- Utilizar reglas de Emerging Threats Open, o `ET open`.
+- Detectar actividad relacionada con botnets y servidores de comando y control.
+- Detectar intentos de explotación de vulnerabilidades.
+- Identificar tráfico relacionado con malware y phishing.
+- Detectar escaneos de red, shellcode y actividad DNS sospechosa.
+- Detectar ataques dirigidos a clientes, servidores y aplicaciones web.
+- Convertir reglas con acción `Alert` en acciones de bloqueo mediante políticas.
+- Crear reglas personalizadas utilizando direcciones IP de origen y destino.
+- Bloquear tráfico en tiempo real mediante la acción `Drop`.
+- Registrar los eventos bloqueados en la sección de alertas.
+- Restaurar la conectividad al desactivar una regla personalizada.
 
-La prueba realizada desde Kali Linux confirmó que OPNsense y Suricata están funcionando correctamente como sistema de prevención de intrusiones dentro del laboratorio SOC.
+La prueba realizada desde Kali Linux confirmó que Suricata fue capaz de bloquear el tráfico dirigido hacia `1.1.1.1` y registrar correctamente los eventos generados.
 
-> **Nota:** La regla utilizada para bloquear el acceso a `1.1.1.1` fue creada únicamente para comprobar el funcionamiento del IPS. Después de finalizar la prueba, la regla fue desactivada para evitar interrupciones en la conectividad.
+Además, la instalación de las reglas de `abuse.ch` y `ET open` amplió la capacidad de detección frente a diferentes tipos de amenazas, como malware, phishing, explotación de vulnerabilidades, escaneos de red y ataques contra aplicaciones web.
+
+Con esta configuración, OPNsense y Suricata proporcionan una capa adicional de detección y prevención para proteger las máquinas virtuales que forman parte del laboratorio SOC.
+
+> **Nota:** Antes de convertir grandes cantidades de reglas de `Alert` a `Drop`, es recomendable supervisar las alertas generadas para identificar posibles falsos positivos y evitar el bloqueo de tráfico legítimo.
