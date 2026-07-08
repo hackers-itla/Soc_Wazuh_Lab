@@ -1,4 +1,4 @@
-# Laboratorio SOC con Wazuh
+# Implemmentacion de laboratorio SOC utilizando Wazuh
 
 ![Estado](https://img.shields.io/badge/Estado-En%20construcción-yellow)
 ![Wazuh](https://img.shields.io/badge/SIEM-Wazuh-blue)
