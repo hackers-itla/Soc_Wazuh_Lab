@@ -10,7 +10,7 @@ Este proyecto documenta la implementación de un laboratorio SOC virtualizado
 para monitoreo, detección y análisis de eventos de seguridad.
 
 El laboratorio utiliza Wazuh como plataforma SIEM/XDR, Windows Server y
-Windows 10 como endpoints, y OPNsense con Suricata como IDS/IPS.
+Windows 10 como endpoints, y OPNsense con Suricata como IPS.
 
 ## Objetivos
 
@@ -18,7 +18,7 @@ Windows 10 como endpoints, y OPNsense con Suricata como IDS/IPS.
 - Registrar Windows Server y Windows 10 como agentes.
 - Instalar Sysmon en los endpoints Windows.
 - Implementar OPNsense como firewall.
-- Configurar Suricata como IDS/IPS.
+- Configurar Suricata como IPS.
 - Centralizar y analizar eventos de seguridad.
 - Realizar pruebas controladas para validar las detecciones.
 - Documentar alertas, evidencias y resultados.
@@ -28,7 +28,7 @@ Windows 10 como endpoints, y OPNsense con Suricata como IDS/IPS.
 | Máquina virtual | Sistema operativo | Función |
 |---|---|---|
 | Wazuh Server | Ubuntu Server | Manager, Indexer y Dashboard |
-| Firewall | OPNsense | Firewall, router y Suricata IDS/IPS |
+| Firewall | OPNsense | Firewall, router y Suricata IPS |
 | Servidor | Windows Server | Active Directory, DNS y endpoint monitoreado |
 | Cliente | Windows 10 | Estación de trabajo monitoreada |
 | Atacante | Kali Linux | Generación de tráfico y pruebas controladas |
@@ -42,7 +42,7 @@ interna protegida por OPNsense.
 Internet / NAT
       |
    OPNsense
- Suricata IDS/IPS
+ Suricata IPS
       |
  Red interna del laboratorio
       |
